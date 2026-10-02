@@ -64,7 +64,7 @@ const deleteItem = (req, res) => {
 // PUT /items/:itemId/likes - Like an item by ID
 const likeItem =  (req, res) => Item.findByIdAndUpdate (
   req.params.itemId, // destructure the itemId from the request parameters, it will be used to find the item in the database
-  { $addToSet: { likes: req.user._id }}, //add _id to the array if it's not there yet
+  { $addToSet: { likes: req.user._id }}, // add _id to the array if it's not there yet
   { new: true },
 )
   .orFail()
@@ -89,7 +89,7 @@ const likeItem =  (req, res) => Item.findByIdAndUpdate (
 // DELETE /items/:itemId/likes - Dislike an item by ID
 const dislikeItem = (req, res) => Item.findByIdAndUpdate (
   req.params.itemId, // destructure the itemId from the request parameters, it will be used to find the item in the database
-  { $pull: { likes: req.user._id }}, //remove _id from the array
+  { $pull: { likes: req.user._id }}, // remove _id from the array
   { new: true },
 )
   .orFail()
