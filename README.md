@@ -1,9 +1,3 @@
 # WTWR (What to Wear?): Back End
-The back-end project is focused on creating a server for the WTWR application. You’ll gain a deeper understanding of how to work with databases, set up security and testing, and deploy web applications on a remote machine. The eventual goal is to create a server with an API and user authorization.
-## Running the Project
-`npm run start` — to launch the server 
 
-`npm run dev` — to launch the server with the hot reload feature
-
-### Testing
-Before committing your code, make sure you edit the file `sprint.txt` in the root folder. The file `sprint.txt` should contain the number of the sprint you're currently working on. For ex. 12
+This project focuses on the back-end side for the WTWR application. Through developing this project I gained a deeper knowledge of how to work with databases with Express.js which is a Node.js web application framework that simplifies building server-side applications and APIs. To set up the server I used MongoDB and its navigator MongoDB Compass. MongoDB is a NoSQL document database that stores data in JSON-like documents that allow the development of dynamic schemas that can be modified as requirements for the application evolve. I deployed web applications on a remote machine using Nodemon, a development tool for Node.js apps that automates restarting the server when changes in the files are detected enhancing the workflow during development. To refine the syntax in my code and make it conform to the required standards I learned to use tools such as ESLint with Airbnb configuration and Prettier. I set up security and testing and then tested all the application's routes using the third party testing tool Postman. During this project I learned a lot of valuable skills such as configuring controllers and routers and error testing which I personally believe is one of the most valuable skills to have as a developer. It was a challenging but very rewarding experience.
