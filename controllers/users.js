@@ -29,8 +29,9 @@ const getUser = (req, res) => {
         return res
           .status(NOT_FOUND)
           .send({ message: "Requested resource not found." });
-      }  if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -48,7 +49,9 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Requested resource not found" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)

@@ -28,7 +28,7 @@ const createItem = (req, res) => {
     .catch((err) => {
       console.error(err);
       if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -52,8 +52,9 @@ const deleteItem = (req, res) => {
         return res
           .status(NOT_FOUND)
           .send({ message: "Requested resource not found." });
-      } if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
@@ -62,13 +63,14 @@ const deleteItem = (req, res) => {
 };
 
 // PUT /items/:itemId/likes - Like an item by ID
-const likeItem =  (req, res) => Item.findByIdAndUpdate (
-  req.params.itemId, // destructure the itemId from the request parameters, it will be used to find the item in the database
-  { $addToSet: { likes: req.user._id }}, // add _id to the array if it's not there yet
-  { new: true },
-)
-  .orFail()
-  .then((item) =>
+const likeItem = (req, res) =>
+  Item.findByIdAndUpdate(
+    req.params.itemId, // destructure the itemId from the request parameters, it will be used to find the item in the database
+    { $addToSet: { likes: req.user._id } }, // add _id to the array if it's not there yet
+    { new: true }
+  )
+    .orFail()
+    .then((item) =>
       res.status(200).send({ message: "Item liked successfully", item })
     )
     .catch((err) => {
@@ -77,23 +79,24 @@ const likeItem =  (req, res) => Item.findByIdAndUpdate (
         return res
           .status(NOT_FOUND)
           .send({ message: "Requested resource not found." });
-      } if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });
     });
 
-
 // DELETE /items/:itemId/likes - Dislike an item by ID
-const dislikeItem = (req, res) => Item.findByIdAndUpdate (
-  req.params.itemId, // destructure the itemId from the request parameters, it will be used to find the item in the database
-  { $pull: { likes: req.user._id }}, // remove _id from the array
-  { new: true },
-)
-  .orFail()
-  .then((item) =>
+const dislikeItem = (req, res) =>
+  Item.findByIdAndUpdate(
+    req.params.itemId, // destructure the itemId from the request parameters, it will be used to find the item in the database
+    { $pull: { likes: req.user._id } }, // remove _id from the array
+    { new: true }
+  )
+    .orFail()
+    .then((item) =>
       res.status(200).send({ message: "Item disliked successfully", item })
     )
     .catch((err) => {
@@ -102,13 +105,13 @@ const dislikeItem = (req, res) => Item.findByIdAndUpdate (
         return res
           .status(NOT_FOUND)
           .send({ message: "Requested resource not found." });
-      } if (err.name === "CastError") {
-        return res.status(BAD_REQUEST).send({ message: err.message });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({ message: "Invalid data" });
       }
       return res
         .status(INTERNAL_SERVER_ERROR)
         .send({ message: "An error has occurred on the server." });
     });
 
-
-module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem  };
+module.exports = { getItems, createItem, deleteItem, likeItem, dislikeItem };
