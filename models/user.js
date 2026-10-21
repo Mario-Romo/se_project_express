@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 
+
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -18,6 +19,25 @@ const userSchema = new mongoose.Schema({
       message: "You must enter a valid URL",
     },
   },
+  email: {
+    type: String,
+    required: [true, "The email field is required."],
+    unique: true,
+    select: false, // This ensures that the email field is not returned in queries by default
+    validate: {
+      validator(value) {
+        return validator.isEmail(value);
+      },
+      message: "You must enter a valid email address",
+    },
+  },
+  password: {
+    type: String,
+    required: [true, "The password field is required."],
+    minlength: 8,
+    select: false, // This ensures that the password field is not returned in queries by default
+  },
+
 });
 
 module.exports = mongoose.model("user", userSchema);
