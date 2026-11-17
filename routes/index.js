@@ -2,16 +2,22 @@ const router = require("express").Router();
 const userRouter = require("./users");
 const itemRouter = require("./clothingItems");
 const { NOT_FOUND } = require("../utils/errors");
+const { login, createUser } = require("../controllers/users");
 
-// Use the userRouter for all routes starting with /users
-router.use("/users", userRouter);
-// Use the itemRouter for all routes starting with /items
-router.use("/items", itemRouter);
+/*
+All routes are read from top to bottom by the router, the catch-all route for undefined routes MUST  placed at the end of the router, after all other routes have been defined, so that it only catches requests that do not match any of the defined routes.
+Use the userRouter for all routes starting with /users
+*/
 
+// handlers for the /signin (or /login) and /signup routes, the order of these routes is important, they should be declared before the catch-all route for undefined routes, otherwise they will never be reached and will always return a 404 error
+router.post("/signin", login);
+router.post("/signup", createUser);
+router.use("/items", itemRouter); // Use the itemRouter for all routes starting with /items
+
+router.use("/users", userRouter); // Use the userRouter for all routes starting with /users
 // catch-all route for any undefined routes, returns a 404 error with a message. Important: place this route at the end of the router, after all other routes have been defined, so that it only catches requests that do not match any of the defined routes.
 router.use((req, res) =>
   res.status(NOT_FOUND).send({ message: "Requested resource not found" })
 );
 
-// make sure to export the router, all routes declared here are exported with it
 module.exports = router;

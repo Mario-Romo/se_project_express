@@ -1,9 +1,10 @@
 const router = require("express").Router();
-const { getUsers, createUser, getUser } = require("../controllers/users");
+const { getCurrentUser, updateCurrentUser } = require("../controllers/users");
+const auth = require("../middlewares/auth");
 
-// pay attention to the path here, it is relative to the current file, don't use "/users" because that would look for a users.js file in the root of the project and would not work
-router.get("/", getUsers);
-router.get("/:userId", getUser);
-router.post("/", createUser);
+
+ // apply the auth middleware to all routes in this router, this will ensure that only authenticated users can access these routes
+router.get("/me", auth,  getCurrentUser);
+router.patch("/me", auth, updateCurrentUser);
 
 module.exports = router;

@@ -1,8 +1,10 @@
 const Item = require("../models/clothingItem");
 const {
-  BAD_REQUEST,
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
+  FORBIDDEN,
+  VALIDATION_ERROR,
+  BAD_REQUEST,
 } = require("../utils/errors");
 
 // GET /items - Retrieve all items
@@ -19,9 +21,9 @@ const getItems = (req, res) => {
 
 // POST /items - Create a new item
 const createItem = (req, res) => {
-  // destructure the name and avatar fields from the request body
+  // destructure the name, weather, and imageUrl fields from the request body
   const { name, weather, imageUrl } = req.body;
-  const { _id: owner } = req.user;
+  const { _id: owner } = req.user; // destructure the _id field from the user object in the request, and rename it to owner, this will be used to set the owner of the new item
   // ... then pass them to the User.create() method to create a new user in the database
   Item.create({ name, weather, imageUrl, owner })
     .then((item) => res.status(201).send(item))
@@ -40,18 +42,31 @@ const createItem = (req, res) => {
 const deleteItem = (req, res) => {
   // destructure the itemId from the request parameters
   const { itemId } = req.params;
-  // ... then pass it to the User.findByIdAndDelete() method to delete the item from the database
-  Item.findByIdAndDelete(itemId)
+  // find the item by ID, and if it exists, check if the owner of the item is the same as the user making the request, if so, delete the item, otherwise return a 403 Forbidden error
+  Item.findById(itemId)
     .orFail() // This will throw a DocumentNotFoundError if the item is not found
-    .then((item) =>
-      res.status(200).send({ message: "Item deleted successfully", item })
-    )
+    .then((item) => {
+      if (!item.owner.equals(req.user._id)) {
+        const err = new Error("Forbidden");
+        err.statusCode = FORBIDDEN;
+        throw err;
+      }
+      return Item.deleteOne(item);
+    })
+    .then(() => {
+      return res.status(200).send({ message: "Item deleted successfully" });
+    })
     .catch((err) => {
-      console.error(err);
+      console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
       if (err.name === "DocumentNotFoundError") {
         return res
           .status(NOT_FOUND)
           .send({ message: "Requested resource not found." });
+      }
+      if (err.statusCode === FORBIDDEN) {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "You can only delete your own items." });
       }
       if (err.name === "CastError") {
         return res.status(BAD_REQUEST).send({ message: "Invalid data" });
