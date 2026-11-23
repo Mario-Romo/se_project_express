@@ -126,33 +126,35 @@ const createUser = (req, res) => {
       .send({ message: "Email, name, and password are required" });
   }
   // before creating the user, hash the password using bcryptjs and then pass the hashed password to the User.create() method to create a new user in the database
-  bcryptjs
-    .hash(password, 10)
-    .then((hashedPassword) =>
-      User.create({ name, avatar, email, password: hashedPassword })
-    )
-    .then((user) => {
-      const userObj = user.toJSON(); // convert the user document to a plain JavaScript object, notice it needs a different variable name than the user document itself, otherwise it will throw an error
-      delete userObj.password; // ...and remove the password field before sending the response
-      return res.status(201).send(userObj);
-    })
-    // this catch block will handle any errors that occur during the user creation process, including validation errors and server errors
-    .catch((err) => {
-      console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
-      if (err.name === "ValidationError") {
-        return res.status(BAD_REQUEST).send({
-          message: "Data validation failed or another error occured.",
-        });
-      }
-      if (err.code === 11000) {
+  return (
+    bcryptjs
+      .hash(password, 10)
+      .then((hashedPassword) =>
+        User.create({ name, avatar, email, password: hashedPassword })
+      )
+      .then((user) => {
+        const userObj = user.toJSON(); // convert the user document to a plain JavaScript object, notice it needs a different variable name than the user document itself, otherwise it will throw an error
+        delete userObj.password; // ...and remove the password field before sending the response
+        return res.status(201).send(userObj);
+      })
+      // this catch block will handle any errors that occur during the user creation process, including validation errors and server errors
+      .catch((err) => {
+        console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
+        if (err.name === "ValidationError") {
+          return res.status(BAD_REQUEST).send({
+            message: "Data validation failed or another error occured.",
+          });
+        }
+        if (err.code === 11000) {
+          return res
+            .status(CONFLICT)
+            .send({ message: "Conflict: User already exists" });
+        }
         return res
-          .status(CONFLICT)
-          .send({ message: "Conflict: User already exists" });
-      }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error has occurred on the server." });
+      })
+  );
 };
 
 module.exports = {
