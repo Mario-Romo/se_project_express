@@ -1,7 +1,9 @@
+// import external packages first
 const express = require("express");
 const mongoose = require("mongoose");
-const mainRouter = require("./routes/index");
 const cors = require("cors");
+// import internal modules next
+const mainRouter = require("./routes/index");
 
 const app = express();
 app.use(cors()); // make sure this runs before express.json() and before mainRouter is mounted, otherwise the CORS headers will not be applied to the responses from the routes defined in mainRouter
