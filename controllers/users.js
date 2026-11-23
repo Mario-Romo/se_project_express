@@ -1,5 +1,8 @@
-const User = require("../models/user");
+// first import external packages
 const jwt = require("jsonwebtoken");
+const bcryptjs = require("bcryptjs");
+// then import internal modules
+const User = require("../models/user");
 const {
   BAD_REQUEST,
   NOT_FOUND,
@@ -8,7 +11,7 @@ const {
   CONFLICT,
   VALIDATION_ERROR,
 } = require("../utils/errors");
-const bcryptjs = require("bcryptjs");
+
 const { JWT_SECRET } = require("../utils/config");
 
 // GET /users - Retrieve all users
@@ -78,7 +81,7 @@ const updateCurrentUser = (req, res) => {
     });
 };
 
-//POST /login - login controller, authenticates a user and returns a JWT token
+// POST /login - login controller, authenticates a user and returns a JWT token
 const login = (req, res) => {
   // Check if there is no email or password in request body
   const { email, password } = req.body;
@@ -100,12 +103,12 @@ const login = (req, res) => {
           expiresIn: "7d",
         });
         // Send the token in the response
-        res.send({ token });
+        return res.send({ token });
       })
       // if not send 401 status with message, authentication error
       .catch((err) => {
         console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
-        res
+        return res
           .status(UNAUTHORIZED)
           .send({ message: "Incorrect email or password" });
       })
@@ -131,7 +134,7 @@ const createUser = (req, res) => {
     .then((user) => {
       const userObj = user.toJSON(); // convert the user document to a plain JavaScript object, notice it needs a different variable name than the user document itself, otherwise it will throw an error
       delete userObj.password; // ...and remove the password field before sending the response
-      res.status(201).send(userObj);
+      return res.status(201).send(userObj);
     })
     // this catch block will handle any errors that occur during the user creation process, including validation errors and server errors
     .catch((err) => {

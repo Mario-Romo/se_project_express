@@ -3,7 +3,6 @@ const {
   NOT_FOUND,
   INTERNAL_SERVER_ERROR,
   FORBIDDEN,
-  VALIDATION_ERROR,
   BAD_REQUEST,
 } = require("../utils/errors");
 
@@ -53,9 +52,9 @@ const deleteItem = (req, res) => {
       }
       return Item.deleteOne(item);
     })
-    .then(() => {
-      return res.status(200).send({ message: "Item deleted successfully" });
-    })
+    .then(() =>
+      res.status(200).send({ message: "Item deleted successfully" })
+    )
     .catch((err) => {
       console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
       if (err.name === "DocumentNotFoundError") {
