@@ -1,3 +1,8 @@
 # WTWR (What to Wear?): Back End
 
 This project focuses on the back-end side for the WTWR application. Through developing this project I gained a deeper knowledge of how to work with databases with Express.js which is a Node.js web application framework that simplifies building server-side applications and APIs. To set up the server I used MongoDB and its navigator MongoDB Compass. MongoDB is a NoSQL document database that stores data in JSON-like documents that allow the development of dynamic schemas that can be modified as requirements for the application evolve. I deployed web applications on a remote machine using Nodemon, a development tool for Node.js apps that automates restarting the server when changes in the files are detected enhancing the workflow during development. To refine the syntax in my code and make it conform to the required standards I learned to use tools such as ESLint with Airbnb configuration and Prettier. I set up security and testing and then tested all the application's routes using the third party testing tool Postman. During this project I learned a lot of valuable skills such as configuring controllers and routers and error testing which I personally believe is one of the most valuable skills to have as a developer. It was a challenging but very rewarding experience.
+
+## Project Pitch Video
+
+Check out [this video] https://www.loom.com/share/e587e2120ee244b49e5a2aefffd604a9, where I describe my
+project and some challenges I faced while building it.
