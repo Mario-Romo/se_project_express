@@ -4,7 +4,6 @@ const FORBIDDEN = 403;
 const NOT_FOUND = 404;
 const CONFLICT = 409;
 const INTERNAL_SERVER_ERROR = 500;
-const VALIDATION_ERROR = 422;
 
 module.exports = {
   BAD_REQUEST,
@@ -13,5 +12,4 @@ module.exports = {
   UNAUTHORIZED,
   FORBIDDEN,
   CONFLICT,
-  VALIDATION_ERROR,
 };

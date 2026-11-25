@@ -9,7 +9,6 @@ const {
   INTERNAL_SERVER_ERROR,
   UNAUTHORIZED,
   CONFLICT,
-  VALIDATION_ERROR,
 } = require("../utils/errors");
 
 const { JWT_SECRET } = require("../utils/config");
@@ -40,7 +39,12 @@ const getCurrentUser = (req, res) => {
           .send({ message: "Requested resource not found." });
       }
       if (err.name === "ValidationError") {
-        return res.status(VALIDATION_ERROR).send({
+        return res.status(BAD_REQUEST).send({
+          message: "Data validation failed or another error occured.",
+        });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({
           message: "Data validation failed or another error occured.",
         });
       }
@@ -71,8 +75,13 @@ const updateCurrentUser = (req, res) => {
           .send({ message: "Requested resource not found." });
       }
       if (err.name === "ValidationError") {
-        return res.status(VALIDATION_ERROR).send({
-          message: "Invalid data",
+        return res.status(BAD_REQUEST).send({
+          message: "Data validation failed or another error occured.",
+        });
+      }
+      if (err.name === "CastError") {
+        return res.status(BAD_REQUEST).send({
+          message: "Data validation failed or another error occured.",
         });
       }
       return res
@@ -86,8 +95,6 @@ const login = (req, res) => {
   // Check if there is no email or password in request body
   const { email, password } = req.body;
   // If either email or password is missing, return a 400 Bad Request response with an error message
-  console.log(email, password);
-
   if (!email || !password) {
     return res
       .status(BAD_REQUEST)
@@ -105,12 +112,17 @@ const login = (req, res) => {
         // Send the token in the response
         return res.send({ token });
       })
-      // if not send 401 status with message, authentication error
+      // if not send an error response with a 401 Unauthorized status code and an error message
       .catch((err) => {
         console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
+        if (err.message === "Incorrect email or password") {
+          return res.status(UNAUTHORIZED).send({
+            message: "Incorrect email or password",
+          });
+        }
         return res
-          .status(UNAUTHORIZED)
-          .send({ message: "Incorrect email or password" });
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error has occurred on the server." });
       })
   );
 };
@@ -120,10 +132,10 @@ const createUser = (req, res) => {
   // destructure the name, avatar, email, and password fields from the request body
   const { name, avatar, email, password } = req.body;
   // Check if there is no email or password in request body
-  if (!email || !password || !name) {
+  if (!email || !password || !name || !avatar) {
     return res
       .status(BAD_REQUEST)
-      .send({ message: "Email, name, and password are required" });
+      .send({ message: "Email, name, avatar, and password are required" });
   }
   // before creating the user, hash the password using bcryptjs and then pass the hashed password to the User.create() method to create a new user in the database
   return (
