@@ -9,7 +9,7 @@ const {
 // GET /items - Retrieve all items
 const getItems = (req, res) => {
   Item.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.send(items))
     .catch((err) => {
       console.error(err);
       return res
@@ -50,11 +50,9 @@ const deleteItem = (req, res) => {
         err.statusCode = FORBIDDEN;
         throw err;
       }
-      return Item.deleteOne(item);
+      return item.deleteOne(); // delete the item if the owner matches, no arguments are needed for deleteOne() because it will delete the document that was found by findById()
     })
-    .then(() =>
-      res.status(200).send({ message: "Item deleted successfully" })
-    )
+    .then(() => res.send({ message: "Item deleted successfully" }))
     .catch((err) => {
       console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
       if (err.name === "DocumentNotFoundError") {
@@ -85,7 +83,7 @@ const likeItem = (req, res) =>
   )
     .orFail()
     .then((item) =>
-      res.status(200).send({ message: "Item liked successfully", item })
+      res.send({ message: "Item liked successfully", item })
     )
     .catch((err) => {
       console.error(err);
@@ -111,7 +109,7 @@ const dislikeItem = (req, res) =>
   )
     .orFail()
     .then((item) =>
-      res.status(200).send({ message: "Item disliked successfully", item })
+      res.send({ message: "Item disliked successfully", item })
     )
     .catch((err) => {
       console.error(err);

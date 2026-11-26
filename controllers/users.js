@@ -13,18 +13,6 @@ const {
 
 const { JWT_SECRET } = require("../utils/config");
 
-// GET /users - Retrieve all users
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error(err); // this gives you info about the error in the console, useful for debugging. Always include it.
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
-};
-
 // GET /users/me - Find the current user based on the JWT token provided in the request headers, and return the user data in the response
 const getCurrentUser = (req, res) => {
   const { _id: userId } = req.user;
@@ -137,7 +125,12 @@ const createUser = (req, res) => {
       .status(BAD_REQUEST)
       .send({ message: "Email, name, avatar, and password are required" });
   }
-  // before creating the user, hash the password using bcryptjs and then pass the hashed password to the User.create() method to create a new user in the database
+  if (password.length < 8) {
+    return res
+      .status(BAD_REQUEST)
+      .send({ message: "Password must be at least 8 characters long" });
+  }
+  // ... continue with the hashing but before creating the user, hash the password using bcryptjs and then pass the hashed password to the User.create() method to create a new user in the database
   return (
     bcryptjs
       .hash(password, 10)
@@ -170,7 +163,6 @@ const createUser = (req, res) => {
 };
 
 module.exports = {
-  getUsers,
   createUser,
   getCurrentUser,
   login,
